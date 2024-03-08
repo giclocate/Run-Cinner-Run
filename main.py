@@ -3,7 +3,6 @@ from pygame.locals import *
 from sys import exit
 import os
 
-from pygame.sprite import _Group
 
 diretorio_principal = os.path.dirname(__file__)
 diretorio_imagens = os.path.join(diretorio_principal, 'imagens')
@@ -17,10 +16,10 @@ tela = pygame.display.set_mode((LARGURA, ALTURA))
 
 pygame.display.set_caption('Projeto P1')
 
-#separar os frames da spritesheet
+# separar os frames da spritesheet
 sprite_sheet = pygame.image.load(os.path.join(diretorio_imagens, 'alunosprite.png')).convert_alpha()
-nuvem_sprite_sheet = pygame.image.load(os.path.join(diretorio_imagens, 'cloud-1.png'))
-#convert_alpha vai ignorar a transparência
+nuvem_sprite_sheet = pygame.image.load(os.path.join(diretorio_imagens, 'clouds-small.png')).convert_alpha()
+# convert_alpha vai ignorar a transparência
 
 
 # sprite do aluno
@@ -36,7 +35,7 @@ class Aluno(pygame.sprite.Sprite):
         self.index_lista = 0    
         self.image = self.imagens_aluno[int(self.index_lista)]
         self.rect = self.image.get_rect()
-        self.rect.center = (100,100)
+        self.rect.center = (100,ALTURA - 130)
     
     # método update    
     def update(self):
@@ -44,16 +43,29 @@ class Aluno(pygame.sprite.Sprite):
             self.index_lista = 0
         self.index_lista+= 0.25 
         self.image = self.imagens_aluno[int(self.index_lista)]
-#ignora esse da nuvem pq tá incompleto    
-class nuvens(pygame.sprite.Sprite):
+        
+# ignora esse da nuvem pq tá incompleto    
+class Nuvens(pygame.sprite.Sprite):
     def __init__(self):
         pygame.sprite.Sprite.__init__(self)
-        self.image = nuvem_sprite_sheet.subsurface(())
+        self.image = nuvem_sprite_sheet.subsurface((0,0), (512, 128))
+        self.image = pygame.transform.scale(self.image, (512*2, 128*2))
+        self.rect = self.image.get_rect()
+        self.rect.center = (30, 30)
         
+    def update(self):
+        if self.rect.topright[0] < 0:
+            self.rect.x = LARGURA
+        self.rect.x -= 10
+
 # adicionando as sprites    
 all_sprites = pygame.sprite.Group()
 aluno = Aluno()
 all_sprites.add(aluno)
+
+nuvem = Nuvens()
+all_sprites.add(nuvem)
+
 
 relogio = pygame.time.Clock()
 while True:
