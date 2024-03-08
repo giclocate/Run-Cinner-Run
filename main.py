@@ -44,7 +44,7 @@ class Aluno(pygame.sprite.Sprite):
         self.index_lista+= 0.25 
         self.image = self.imagens_aluno[int(self.index_lista)]
         
-# ignora esse da nuvem pq tá incompleto    
+#classe das nuvens atualizada   
 class Nuvens(pygame.sprite.Sprite):
     def __init__(self):
         pygame.sprite.Sprite.__init__(self)
