@@ -4,6 +4,8 @@ from sys import exit
 import os
 from random import randrange
 pygame.mixer.init()
+pygame.font.init()
+
 
 diretorio_principal = os.path.dirname(__file__)
 diretorio_imagens = os.path.join(diretorio_principal, 'imagens')
@@ -11,6 +13,8 @@ diretorio_sons = os.path.join(diretorio_principal, 'Sounds')
 diretorio_background = os.path.join(diretorio_principal, diretorio_sons, 'Background')
 LARGURA = 640
 ALTURA = 480
+pontos = 0
+tempo = 0
 
 BRANCO = (255,255,255)
 
@@ -28,7 +32,18 @@ rock_sprite = pygame.image.load(os.path.join(diretorio_imagens, 'Rock Pile.png')
 som_colisao = pygame.mixer.Sound(os.path.join(diretorio_sons, 'gta-v-wasted-death-sound.mp3'))
 som_colisao.set_volume(1)
 colidiu = False
+#criei essa variavel para quando implementarmos os objetos conseguirmos mexer nisso melhor
+velocidade_jogo = 10
 
+#essa funcao vai exibr a pontuacao e game over
+def exibe_mensagem(msg, tamanho, cor):
+    fonte = pygame.font.SysFont('comicsanssms', tamanho, True, False)
+    mensagem = f'{msg}'
+    texto_formatado = fonte.render(mensagem, True, cor)
+    return texto_formatado
+
+    
+    
 
 # sprite do aluno
 class Aluno(pygame.sprite.Sprite):
@@ -114,6 +129,7 @@ class Rock(pygame.sprite.Sprite):
             self.rect.x = LARGURA
         self.rect.x -= 10
 
+        
 # adicionando as sprites    
 all_sprites = pygame.sprite.Group()
 aluno = Aluno()
@@ -152,6 +168,7 @@ while True:
                     pass
                 else:
                     aluno.pular()
+                
 
 
     colisoes = pygame.sprite.spritecollide(aluno, group_obstacles, False, pygame.sprite.collide_mask) 
@@ -163,12 +180,19 @@ while True:
         colidiu = True
 
     if colidiu == True:
+        game_over = exibe_mensagem('VOCÊ PERDEU :(', 40, (0,0,0)) #game over
+        tela.blit(game_over, (LARGURA//2, ALTURA//2))
         pass
     else:
+        tempo +=0.05
         all_sprites.update()
-#adicionando na tela as sprites criadas
-
-
+        #adicionando na tela as sprites criadas
+        #pontuacao
+        texto_tempo = exibe_mensagem(int(tempo), 40, (255,0,0))
+        texto_pontos = exibe_mensagem(int(pontos), 40, (0,0,0))
+        
+    tela.blit(texto_tempo, (520, 30))#mostra o tempo na tela
+    tela.blit(texto_pontos, (300, 30))#mostra pontuação na tela
 
     pygame.display.flip()
 
