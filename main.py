@@ -194,7 +194,7 @@ while True:
     tela.blit(texto_tempo, (520, 30))#mostra o tempo na tela
     tela.blit(texto_pontos, (300, 30))#mostra pontuação na tela
 
-    pygame.display.flip()
+    pygame.display.flip() 
 
 
 
