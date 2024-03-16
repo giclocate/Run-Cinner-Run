@@ -2,7 +2,7 @@ import pygame
 from pygame.locals import *
 from sys import exit
 import os
-from random import randrange
+from random import randrange, choice
 pygame.mixer.init()
 pygame.font.init()
 
@@ -27,11 +27,31 @@ sprite_sheet = pygame.image.load(os.path.join(diretorio_imagens, 'alunosprite.pn
 nuvem_sprite_sheet = pygame.image.load(os.path.join(diretorio_imagens, 'clouds-small.png')).convert_alpha()
 ground_sprite_sheet = pygame.image.load(os.path.join(diretorio_imagens, 'Basic_Ground.png')).convert_alpha()
 rock_sprite = pygame.image.load(os.path.join(diretorio_imagens, 'Rock Pile.png')).convert_alpha()
+water_sprite = pygame.image.load(os.path.join(diretorio_imagens, 'Water Bottle.png')).convert_alpha()
 # convert_alpha vai ignorar a transparência
 
-som_colisao = pygame.mixer.Sound(os.path.join(diretorio_sons, 'gta-v-wasted-death-sound.mp3'))
+
+#Erio: função para sortear um número e para pegar um som aleatório de colisão
+escolha_som_colisao = choice([0, 1, 2, 3, 4]) 
+if escolha_som_colisao == 0:
+    som_colisao = pygame.mixer.Sound(os.path.join(diretorio_sons, 'gta-v-wasted-death-sound.mp3'))
+elif escolha_som_colisao == 1:
+    som_colisao = pygame.mixer.Sound(os.path.join(diretorio_sons, 'uh-steve-minecraft-online-audio-converter.mp3'))
+elif escolha_som_colisao == 2:
+    som_colisao = pygame.mixer.Sound(os.path.join(diretorio_sons, 'dark-souls-you-died-sound-effect_hm5sYFG.mp3'))
+elif escolha_som_colisao == 3:
+    som_colisao = pygame.mixer.Sound(os.path.join(diretorio_sons, 'bruh-sound-effect-2-320-kbps.mp3'))
+elif escolha_som_colisao == 4:
+    som_colisao = pygame.mixer.Sound(os.path.join(diretorio_sons, 'emotional-damage-meme-.mp3'))    
 som_colisao.set_volume(1)
+
+#Som de coleta de objeto
+som_coleta_objeto = pygame.mixer.Sound(os.path.join(diretorio_sons, 'Pickup_Coin.wav'))
+som_coleta_objeto.set_volume(1)
+
+#Eric: variável para indicar que é game over, provando que colidiu com o objeto de rocha
 colidiu = False
+
 #criei essa variavel para quando implementarmos os objetos conseguirmos mexer nisso melhor
 velocidade_jogo = 10
 
@@ -70,7 +90,7 @@ class Aluno(pygame.sprite.Sprite):
         self.som_pulo.play()
     # método update    
     def update(self):
-        #quando é teclado a barra de espaço o self.pulo == True daí vamos animar o movimento
+        # Eric: quando é teclado a barra de espaço o self.pulo == True daí vamos animar o movimento
         if self.pulo == True:
             if self.rect.y <= 150:
                 self.pulo = False
@@ -115,6 +135,7 @@ class Ground(pygame.sprite.Sprite):
         if self.rect.topright[0] < 0:
             self.rect.x = LARGURA
         self.rect.x -= 10
+
 #classe pedra
 class Rock(pygame.sprite.Sprite):
     def __init__(self):
@@ -129,6 +150,20 @@ class Rock(pygame.sprite.Sprite):
             self.rect.x = LARGURA
         self.rect.x -= 10
 
+#classe da água
+class Water(pygame.sprite.Sprite):
+    def __init__(self):
+        pygame.sprite.Sprite.__init__(self)
+        self.image = water_sprite.subsurface((0,0), (16,16))
+        self.image = pygame.transform.scale(self.image, (16*2, 16*2))
+        self.rect = self.image.get_rect()
+        self.mask = pygame.mask.from_surface(self.image)
+        self.rect.center = (LARGURA,ALTURA - 180)
+
+    def update(self):
+        if self.rect.topright[0] < 0:
+            self.rect.x = LARGURA
+        self.rect.x -= 10
         
 # adicionando as sprites    
 all_sprites = pygame.sprite.Group()
@@ -146,10 +181,18 @@ for i in range(LARGURA*3//64):
 rock = Rock()
 all_sprites.add(rock)
 
+water = Water()
+all_sprites.add(water)
+
 
 # criando o grupo onde vai ser inserido os obstáculos que colidirem
 group_obstacles = pygame.sprite.Group()
 group_obstacles.add(rock)
+
+
+# criando o grupo onde vai ser inserido os objetos que vão interagir com o boneco
+group_object = pygame.sprite.Group()
+group_object.add(water)
 
 
 #Eventos do jogo
@@ -172,8 +215,13 @@ while True:
 
 
     colisoes = pygame.sprite.spritecollide(aluno, group_obstacles, False, pygame.sprite.collide_mask) 
-    
+    objetos = pygame.sprite.spritecollide(aluno, group_object, True, pygame.sprite.collide_mask) 
     all_sprites.draw(tela)
+
+
+    if objetos == False:
+        texto_pontos += 20
+        som_coleta_objeto.play()
 
     if colisoes and colidiu == False:
         som_colisao.play()
@@ -183,6 +231,7 @@ while True:
         game_over = exibe_mensagem('VOCÊ PERDEU :(', 40, (0,0,0)) #game over
         tela.blit(game_over, (LARGURA//2, ALTURA//2))
         pass
+
     else:
         tempo +=0.05
         all_sprites.update()
@@ -195,6 +244,3 @@ while True:
     tela.blit(texto_pontos, (300, 30))#mostra pontuação na tela
 
     pygame.display.flip()
-
-
-
