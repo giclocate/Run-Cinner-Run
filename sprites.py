@@ -1,6 +1,7 @@
 import pygame
 from pygame.locals import *
 import os
+import random
 from random import choice
 
 
@@ -12,6 +13,7 @@ diretorio_imagens = os.path.join(diretorio_principal, 'assets\imagens')
 diretorio_sons = os.path.join(diretorio_principal, 'assets\Sounds')
 diretorio_background = os.path.join(diretorio_principal, diretorio_sons, 'assets\Background')
 
+#Definições de tela
 LARGURA = 640
 ALTURA = 480
 pontos = 0
@@ -23,6 +25,9 @@ tela = pygame.display.set_mode((LARGURA, ALTURA))
 
 pygame.display.set_caption('Projeto P1')
 
+#Limites de spawn de objetos
+
+y_minimo, y_maximo = 200, 250
 
 # separar os frames da spritesheet
 sprite_sheet = pygame.image.load(os.path.join(diretorio_imagens, 'alunosprite.png')).convert_alpha()
@@ -44,7 +49,7 @@ elif escolha_som_colisao == 2:
 elif escolha_som_colisao == 3:
     som_colisao = pygame.mixer.Sound(os.path.join(diretorio_sons, 'bruh-sound-effect-2-320-kbps.mp3'))
 elif escolha_som_colisao == 4:
-    som_colisao = pygame.mixer.Sound(os.path.join(diretorio_sons, 'emotional-damage-meme-.mp3'))    
+    som_colisao = pygame.mixer.Sound(os.path.join(diretorio_sons, 'emotional-damage-meme.mp3'))    
 som_colisao.set_volume(1)
 
 #Som de coleta de objeto
@@ -89,7 +94,7 @@ class Aluno(pygame.sprite.Sprite):
             self.rect.y -= 20
         else:
             if self.rect.y < self.pos_y_inicial:
-                self.rect.y += 15    
+                self.rect.y += 10
             else:
                 self.rect.y = self.pos_y_inicial
                 
@@ -141,7 +146,7 @@ class Rock(pygame.sprite.Sprite):
     def update(self):
         if self.rect.topright[0] < 0:
             self.rect.x = LARGURA
-        self.rect.x -= 10
+        self.rect.x -= velocidade_jogo
         
         
 class Water(pygame.sprite.Sprite):
@@ -156,4 +161,5 @@ class Water(pygame.sprite.Sprite):
     def update(self):
         if self.rect.topright[0] < 0:
             self.rect.x = LARGURA
-        self.rect.x -= 10
+            self.rect.y = random.randint(y_minimo, y_maximo)
+        self.rect.x -= velocidade_jogo
