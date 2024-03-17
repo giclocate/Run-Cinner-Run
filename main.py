@@ -25,6 +25,8 @@ def main():
 
     all_sprites.add(aluno, nuvem, rock, water)
 
+    velocidade_jogo = 10
+
     for i in range(640 * 3 // 64):
         ground = Ground(i)
         all_sprites.add(ground)
@@ -42,15 +44,15 @@ def main():
     elif escolha_som_colisao == 3:
         som_colisao = pygame.mixer.Sound('assets/Sounds/bruh-sound-effect-2-320-kbps.mp3')
     elif escolha_som_colisao == 4:
-        som_colisao = pygame.mixer.Sound('assets/Sounds/emotional-damage-meme-.mp3')
+        som_colisao = pygame.mixer.Sound('assets/Sounds/emotional-damage-meme.mp3')
 
-    som_colisao.set_volume(0)
+    som_colisao.set_volume(1)
     som_coleta_objeto = pygame.mixer.Sound('assets/Sounds/Pickup_Coin.wav')
-    som_coleta_objeto.set_volume(0)
-
+    som_coleta_objeto.set_volume(1)
+    
     colidiu = False
     tempo = 0
-    pontos = 0
+    pontos = 1000
 
     while True:
         relogio.tick(30)
@@ -66,22 +68,33 @@ def main():
                         pass
                     else:
                         aluno.pular()
+            # Movimentação do componente
+        keys = pygame.key.get_pressed()
+        if keys[pygame.K_LEFT] and aluno.rect.x > 0:
+            aluno.rect.x -= 10
+        if keys[pygame.K_RIGHT] and aluno.rect.x < 640 - 138:
+            aluno.rect.x += 10        
 
         colisoes = pygame.sprite.spritecollide(aluno, group_obstacles, False, pygame.sprite.collide_mask) 
-        objetos = pygame.sprite.spritecollide(aluno, group_object, True, pygame.sprite.collide_mask) 
+        objetos = pygame.sprite.spritecollide(aluno, group_object, False, pygame.sprite.collide_mask) 
         all_sprites.draw(tela)
 
-        if not objetos:
+        if objetos:
             pontos += 20
             som_coleta_objeto.play()
 
-        if colisoes and not colidiu:
+        if colisoes and colidiu == False:
             som_colisao.play()
             colidiu = True
+
+        if tempo == 10 and pontos > 1000: #mudança de fase de jogo
+            velocidade_jogo = 20    
 
         if colidiu:
             game_over = exibe_mensagem('VOCÊ PERDEU :(', 40, (0,0,0)) #game over
             tela.blit(game_over, (640//2, 480//2))
+            pass
+
         else:
             tempo += 0.05
             all_sprites.update()
