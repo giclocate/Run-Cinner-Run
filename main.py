@@ -1,7 +1,7 @@
 import pygame
 from pygame.locals import *
 from sys import exit
-from sprites import Aluno, Nuvens, Ground, Rock, Water
+from sprites import Aluno, Nuvens, Ground, Rock, Water, Coffee
 from utils import exibe_mensagem
 from random import choice
 
@@ -22,8 +22,9 @@ def main():
     nuvem = Nuvens()
     rock = Rock()
     water = Water()
+    cafe = Coffee()
 
-    all_sprites.add(aluno, nuvem, rock, water)
+    all_sprites.add(aluno, nuvem, rock, water, cafe)
 
     velocidade_jogo = 10
 
@@ -76,19 +77,35 @@ def main():
             aluno.rect.x += 10        
 
         colisoes = pygame.sprite.spritecollide(aluno, group_obstacles, False, pygame.sprite.collide_mask) 
-        objetos = pygame.sprite.spritecollide(aluno, group_object, False, pygame.sprite.collide_mask) 
+        objetos = pygame.sprite.spritecollide(aluno, group_object, True, pygame.sprite.collide_mask) 
         all_sprites.draw(tela)
-
+        
+        tipos_objetos = [Water, Coffee]
+        contador_objetos = 0
+        
         if objetos:
-            pontos += 20
-            som_coleta_objeto.play()
+            for objeto in objetos:
+                # Verifica se o objeto é do tipo café ou água
+                if isinstance(objeto, Coffee):
+                    # Aumenta a velocidade do jogo quando o café é coletado
+                    velocidade_jogo += 2
+
+                # Cria um novo objeto alternando entre água e café
+                novo_objeto = tipos_objetos[contador_objetos]()
+                contador_objetos = (contador_objetos + 1) % len(tipos_objetos)  # Atualiza o contador para alternar
+                group_object.add(novo_objeto)
+                all_sprites.add(novo_objeto)
+                
+                pontos += 20
+                som_coleta_objeto.play()
+
 
         if colisoes and colidiu == False:
             som_colisao.play()
             colidiu = True
 
-        if tempo == 10 and pontos > 1000: #mudança de fase de jogo
-            velocidade_jogo = 20    
+        #if tempo == 10 and pontos > 1000: #mudança de fase de jogo
+            #velocidade_jogo = 20    
 
         if colidiu:
             game_over = exibe_mensagem('VOCÊ PERDEU :(', 40, (0,0,0)) #game over
