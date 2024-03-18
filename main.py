@@ -5,11 +5,68 @@ from sprites import Aluno, Nuvens, Ground, Rock, Water, Coffee, Livro
 from utils import exibe_mensagem
 from random import choice
 
-pygame.mixer.init()
-pygame.font.init()
+def exibir_texto(surf, texto, tamanho, x, y, cor):
+    fonte = pygame.font.Font(None, tamanho)
+    texto_surface = fonte.render(texto, True, cor)
+    texto_rect = texto_surface.get_rect()
+    texto_rect.center = (x, y)
+    surf.blit(texto_surface, texto_rect)
+
+def menu(tela, largura, altura):
+    cor_fundo = (0, 0, 0)
+    cor_titulo = (255, 255, 255)
+    cor_opcoes = (255, 255, 255)
+
+    relogio = pygame.time.Clock()
+
+    while True:
+        tela.fill(cor_fundo)  #cor de fundo do menu
+
+        exibir_texto(tela, "Jogo de P1", 48, largura // 2, 100, cor_titulo)
+
+        exibir_texto(tela, "Pressione 'S' para Iniciar", 30, largura // 2, 250, cor_opcoes)
+        exibir_texto(tela, "Pressione 'Q' para Sair", 30, largura // 2, 300, cor_opcoes)
+
+        pygame.display.update()
+        relogio.tick(30)
+
+        for event in pygame.event.get():
+            if event.type == QUIT:
+                pygame.quit()
+                exit()
+            if event.type == KEYDOWN:
+                if event.key == K_s:
+                    return "iniciar"
+                if event.key == K_q:
+                    return "sair"
 
 def main():
     pygame.init()
+
+    largura = 640
+    altura = 480
+    tela = pygame.display.set_mode((largura, altura))
+    pygame.display.set_caption('Jogo de P1')
+
+    pontos = 0
+    contador_agua_coletada = 0
+    contador_cafe_coletado = 0
+    contador_livro_coletado = 0
+
+    while True:
+        opcao = menu(tela, largura, altura)
+
+        if opcao == "iniciar":
+            print("Iniciar jogo")
+            break 
+
+        elif opcao == "sair":
+            pygame.quit()
+            exit()
+
+    pygame.mixer.init()
+    pygame.font.init()
+
     tela = pygame.display.set_mode((640, 480))
     pygame.display.set_caption('Projeto P1')
     relogio = pygame.time.Clock()
@@ -34,7 +91,6 @@ def main():
         all_sprites.add(ground)
 
     group_obstacles.add(rock)
-    group_object.add(water, cafe, livro)
 
     escolha_som_colisao = choice([0, 1, 2, 3, 4]) 
     if escolha_som_colisao == 0:
@@ -70,7 +126,6 @@ def main():
                         pass
                     else:
                         aluno.pular()
-            # Movimentação do componente
         keys = pygame.key.get_pressed()
         if keys[pygame.K_LEFT] and aluno.rect.x > 0:
             aluno.rect.x -= 10
@@ -81,25 +136,19 @@ def main():
         objetos = pygame.sprite.spritecollide(aluno, group_object, True, pygame.sprite.collide_mask) 
         all_sprites.draw(tela)
         
-        tipos_objetos = [Water, Coffee]
-        contador_objetos = 0
-        
         if objetos:
             for objeto in objetos:
-                # Verifica se o objeto é do tipo café ou água
-                if isinstance(objeto, Coffee):
-                    # Aumenta a velocidade do jogo quando o café é coletado
-                    velocidade_jogo += 2
+                if isinstance(objeto, Water):
+                    pontos += 10 
+                    contador_agua_coletada += 1
+                elif isinstance(objeto, Coffee):
+                    pontos += 20 
+                    contador_cafe_coletado += 1
+                elif isinstance(objeto, Livro):
+                    pontos += 30 
+                    contador_livro_coletado += 1
 
-                # Cria um novo objeto alternando entre água e café
-                novo_objeto = tipos_objetos[contador_objetos]()
-                contador_objetos = (contador_objetos + 1) % len(tipos_objetos)  # Atualiza o contador para alternar
-                group_object.add(novo_objeto)
-                all_sprites.add(novo_objeto)
-                
-                pontos += 20
                 som_coleta_objeto.play()
-
 
         if colisoes and colidiu == False:
             som_colisao.play()
@@ -121,6 +170,13 @@ def main():
         texto_pontos = exibe_mensagem(int(pontos), 40, (0, 0, 0))
         tela.blit(texto_tempo, (520, 30))
         tela.blit(texto_pontos, (300, 30))
+
+        texto_contador_agua = exibe_mensagem(f'Água coletada: {contador_agua_coletada}', 30, (0, 0, 255))
+        texto_contador_cafe = exibe_mensagem(f'Café coletado: {contador_cafe_coletado}', 30, (255, 0, 0))
+        texto_contador_livro = exibe_mensagem(f'Livro coletado: {contador_livro_coletado}', 30, (0, 255, 0))
+        tela.blit(texto_contador_agua, (20, 70))
+        tela.blit(texto_contador_cafe, (20, 100))
+        tela.blit(texto_contador_livro, (20, 130))
 
         pygame.display.flip()
 
