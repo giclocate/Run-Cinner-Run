@@ -1,7 +1,7 @@
 import pygame
 from pygame.locals import *
 from sys import exit
-from sprites import Aluno, Nuvens, Ground, Rock, Water, Coffee
+from sprites import Aluno, Nuvens, Ground, Rock, Water, Coffee, Livro
 from utils import exibe_mensagem
 from random import choice
 
@@ -23,8 +23,9 @@ def main():
     rock = Rock()
     water = Water()
     cafe = Coffee()
+    livro = Livro()
 
-    all_sprites.add(aluno, nuvem, rock, water, cafe)
+    all_sprites.add(aluno, nuvem, rock, water, cafe, livro)
 
     velocidade_jogo = 10
 
@@ -33,7 +34,7 @@ def main():
         all_sprites.add(ground)
 
     group_obstacles.add(rock)
-    group_object.add(water)
+    group_object.add(water, cafe, livro)
 
     escolha_som_colisao = choice([0, 1, 2, 3, 4]) 
     if escolha_som_colisao == 0:
