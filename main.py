@@ -90,11 +90,11 @@ def main():
                 # Verifica se o objeto é do tipo café ou água
                 if isinstance(objeto, Coffee):
                     # Aumenta a velocidade do jogo quando o café é coletado
-                    pontos += 10
+                    pontos += 5
                 if isinstance(objeto, Livro):
                     pontos += 20
                 if isinstance(objeto, Water):
-                    pontos += 15   
+                    pontos += 10   
 
                 # Cria um novo objeto alternando entre água e café
                 novo_objeto = tipos_objetos[contador_objetos]()
@@ -103,15 +103,13 @@ def main():
                 all_sprites.add(novo_objeto)
                 
                 
-
                 som_coleta_objeto.play()
-
 
         if colisoes and colidiu == False:
             som_colisao.play()
             colidiu = True
 
-        if tempo > 10 and  tempo < 10.15:
+        if tempo > 10 and  tempo < 10.10:
             rock.aumentavelocidade()
             pass
 
