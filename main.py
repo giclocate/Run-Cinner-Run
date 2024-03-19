@@ -1,7 +1,7 @@
 import pygame
 from pygame.locals import *
 from sys import exit
-from sprites import Aluno, Nuvens, Ground, Rock, Water, Coffee, Livro
+from sprites import Aluno, Nuvens, Ground, Rock, Water, Coffee, Livro, bg
 from utils import exibe_mensagem
 from random import choice
 
@@ -54,11 +54,11 @@ def main():
     
     colidiu = False
     tempo = 0
-    pontos = 1000
+    pontos = 0
 
     while True:
         relogio.tick(30)
-        tela.fill((255, 255, 255))
+        bg()
 
         for event in pygame.event.get():
             if event.type == QUIT:
@@ -81,7 +81,7 @@ def main():
         objetos = pygame.sprite.spritecollide(aluno, group_object, True, pygame.sprite.collide_mask) 
         all_sprites.draw(tela)
         
-        tipos_objetos = [Water, Coffee]
+        tipos_objetos = [Water, Coffee, Livro]
         contador_objetos = 0
         
         if objetos:
@@ -90,6 +90,11 @@ def main():
                 if isinstance(objeto, Coffee):
                     # Aumenta a velocidade do jogo quando o café é coletado
                     velocidade_jogo += 2
+                    pontos += 10
+                if isinstance(objeto, Livro):
+                    pontos += 20
+                if isinstance(objeto, Water):
+                    pontos += 15   
 
                 # Cria um novo objeto alternando entre água e café
                 novo_objeto = tipos_objetos[contador_objetos]()
@@ -97,7 +102,8 @@ def main():
                 group_object.add(novo_objeto)
                 all_sprites.add(novo_objeto)
                 
-                pontos += 20
+                
+
                 som_coleta_objeto.play()
 
 

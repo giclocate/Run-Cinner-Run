@@ -37,6 +37,7 @@ rock_sprite = pygame.image.load(os.path.join(diretorio_imagens, 'Rock Pile.png')
 water_sprite = pygame.image.load(os.path.join(diretorio_imagens, 'Water Bottle.png')).convert_alpha()
 cafe_sprite = pygame.image.load(os.path.join(diretorio_imagens, 'Coffee.png')).convert_alpha()
 livro_sprite = pygame.image.load(os.path.join(diretorio_imagens, 'Book2.png')).convert_alpha()
+fundo = pygame.image.load(os.path.join(diretorio_imagens, 'sky.png')).convert_alpha()
 # convert_alpha vai ignorar a transparência
 
 
@@ -158,7 +159,8 @@ class Water(pygame.sprite.Sprite):
         self.image = pygame.transform.scale(self.image, (16*2, 16*2))
         self.rect = self.image.get_rect()
         self.mask = pygame.mask.from_surface(self.image)
-        self.rect.center = (LARGURA,ALTURA - 180)
+        self.rect.x = LARGURA
+        self.rect.y = random.randint(y_minimo, y_maximo)
 
     def update(self):
         if self.rect.topright[0] < 0:
@@ -174,7 +176,8 @@ class Coffee(pygame.sprite.Sprite):
         self.image = pygame.transform.scale(self.image, (16*2, 16*2))
         self.rect = self.image.get_rect()
         self.mask = pygame.mask.from_surface(self.image)
-        self.rect.center = (LARGURA,ALTURA - 180)
+        self.rect.x = LARGURA
+        self.rect.y = random.randint(y_minimo, y_maximo)
         
     def update(self):
         if self.rect.topright[0] < 0:
@@ -190,10 +193,15 @@ class Livro(pygame.sprite.Sprite):
         self.image = pygame.transform.scale(self.image, (20*2, 20*2))
         self.rect = self.image.get_rect()
         self.mask = pygame.mask.from_surface(self.image)
-        self.rect.center = (LARGURA,ALTURA - 180)
+        self.rect.x = LARGURA
+        self.rect.y = random.randint(y_minimo, y_maximo)
         
     def update(self):
         if self.rect.topright[0] < 0:
             self.rect.x = LARGURA
             self.rect.y = random.randint(y_minimo, y_maximo)
         self.rect.x -= velocidade_jogo
+
+def bg():
+    escala = pygame.transform.scale(fundo, (LARGURA, ALTURA))
+    tela.blit(escala,(0,0))
