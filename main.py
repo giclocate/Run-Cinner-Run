@@ -1,7 +1,7 @@
 import pygame
 from pygame.locals import *
 from sys import exit
-from sprites import Aluno, Nuvens, Ground, Rock, Water
+from sprites import Aluno, Nuvens, Ground, Rock, Water, Coffee, Livro, bg
 from utils import exibe_mensagem
 from random import choice
 
@@ -10,6 +10,8 @@ pygame.font.init()
 
 def main():
     pygame.init()
+    musica_de_fundo = pygame.mixer.music.load('assets/Background/Lemon Knife - Zombified! (Instrumental).mp3')
+    pygame.mixer.music.play(-1)
     tela = pygame.display.set_mode((640, 480))
     pygame.display.set_caption('Projeto P1')
     relogio = pygame.time.Clock()
@@ -22,17 +24,18 @@ def main():
     nuvem = Nuvens()
     rock = Rock()
     water = Water()
+    cafe = Coffee()
+    livro = Livro()
 
-    all_sprites.add(aluno, nuvem, rock, water)
+    all_sprites.add(aluno, nuvem, rock, water, cafe, livro)
 
-    velocidade_jogo = 10
 
     for i in range(640 * 3 // 64):
         ground = Ground(i)
         all_sprites.add(ground)
 
     group_obstacles.add(rock)
-    group_object.add(water)
+    group_object.add(water, cafe, livro)
 
     escolha_som_colisao = choice([0, 1, 2, 3, 4]) 
     if escolha_som_colisao == 0:
@@ -52,11 +55,11 @@ def main():
     
     colidiu = False
     tempo = 0
-    pontos = 1000
+    pontos = 0
 
     while True:
         relogio.tick(30)
-        tela.fill((255, 255, 255))
+        bg()
 
         for event in pygame.event.get():
             if event.type == QUIT:
@@ -70,29 +73,50 @@ def main():
                         aluno.pular()
             # Movimentação do componente
         keys = pygame.key.get_pressed()
-        if keys[pygame.K_LEFT] and aluno.rect.x > 0:
+        if keys[pygame.K_LEFT] and aluno.rect.x > 0 and colidiu == False:
             aluno.rect.x -= 10
-        if keys[pygame.K_RIGHT] and aluno.rect.x < 640 - 138:
+        if keys[pygame.K_RIGHT] and aluno.rect.x < 640 - 138 and colidiu == False:
             aluno.rect.x += 10        
 
         colisoes = pygame.sprite.spritecollide(aluno, group_obstacles, False, pygame.sprite.collide_mask) 
-        objetos = pygame.sprite.spritecollide(aluno, group_object, False, pygame.sprite.collide_mask) 
+        objetos = pygame.sprite.spritecollide(aluno, group_object, True, pygame.sprite.collide_mask) 
         all_sprites.draw(tela)
-
+        
+        tipos_objetos = [Water, Coffee, Livro]
+        contador_objetos = 0
+        
         if objetos:
-            pontos += 20
-            som_coleta_objeto.play()
+            for objeto in objetos:
+                # Verifica se o objeto é do tipo café ou água
+                if isinstance(objeto, Coffee):
+                    # Aumenta a velocidade do jogo quando o café é coletado
+                    pontos += 5
+                if isinstance(objeto, Livro):
+                    pontos += 20
+                if isinstance(objeto, Water):
+                    pontos += 10   
+
+                # Cria um novo objeto alternando entre água e café
+                novo_objeto = tipos_objetos[contador_objetos]()
+                contador_objetos = (contador_objetos + 1) % len(tipos_objetos)  # Atualiza o contador para alternar
+                group_object.add(novo_objeto)
+                all_sprites.add(novo_objeto)
+                
+                
+                som_coleta_objeto.play()
 
         if colisoes and colidiu == False:
             som_colisao.play()
             colidiu = True
 
-        if tempo == 10 and pontos > 1000: #mudança de fase de jogo
-            velocidade_jogo = 20    
+        if tempo > 10 and  tempo < 10.10:
+            rock.aumentavelocidade()
+            pass
 
         if colidiu:
             game_over = exibe_mensagem('VOCÊ PERDEU :(', 40, (0,0,0)) #game over
             tela.blit(game_over, (640//2, 480//2))
+            pygame.mixer.music.stop()
             pass
 
         else:
