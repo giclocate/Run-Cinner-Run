@@ -111,7 +111,7 @@ def main():
             som_colisao.play()
             colidiu = True
 
-        if tempo > 10 and  tempo < 10.10:
+        if tempo > 10 and  tempo < 10.15:
             rock.aumentavelocidade()
             pass
 
