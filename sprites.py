@@ -287,4 +287,14 @@ class Calculo(pygame.sprite.Sprite):
         if self.aparecer == True:
             self.rect.x -= 10
         self.aparece = False
- 
+
+water_redimensionada = pygame.image.load(os.path.join(diretorio_imagens, 'Water Bottle.png')).convert_alpha()
+water_redimensionada = pygame.transform.scale(water_redimensionada, (30, 30))
+coffee_redimensionado = pygame.image.load(os.path.join(diretorio_imagens, 'Coffee.png')).convert_alpha()
+coffee_redimensionado = pygame.transform.scale(coffee_redimensionado, (30, 30))
+livro_redimensionado = pygame.image.load(os.path.join(diretorio_imagens, 'Book2.png')).convert_alpha()
+livro_redimensionado = pygame.transform.scale(livro_redimensionado, (30, 30))
+clock = pygame.image.load(os.path.join(diretorio_imagens, 'clock.png.png')).convert_alpha()
+clock = pygame.transform.scale(clock, (31, 31))
+gameover = pygame.image.load(os.path.join(diretorio_imagens, 'gameover.png')).convert_alpha()
+gameover = pygame.transform.scale(gameover, (400, 150))
