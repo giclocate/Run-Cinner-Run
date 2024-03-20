@@ -200,7 +200,6 @@ class Water(pygame.sprite.Sprite):
             self.velocidade_objeto += 10
             self.velocidade = False
         self.rect.x -= self.velocidade_objeto
-   
 #classe do café        
 class Coffee(pygame.sprite.Sprite):
     def __init__(self):
