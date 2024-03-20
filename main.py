@@ -1,12 +1,14 @@
 import pygame
 from pygame.locals import *
 from sys import exit
-from sprites import Aluno, Nuvens, Ground, Rock, Water, Coffee, Livro, bg
+from sprites import Aluno, Nuvens, Ground, Rock, Water, Coffee, Livro, bg, Flag, Calculo, Ground2
 from utils import exibe_mensagem
 from random import choice
 
 pygame.mixer.init()
 pygame.font.init()
+
+
 
 def main():
     pygame.init()
@@ -26,13 +28,17 @@ def main():
     water = Water()
     cafe = Coffee()
     livro = Livro()
+    flag = Flag()
+    calculo = Calculo()
+    all_sprites.add(aluno, nuvem, rock, water, cafe, livro, flag, calculo)
 
-    all_sprites.add(aluno, nuvem, rock, water, cafe, livro)
-
+    velocidade_aluno = 10
+    aumenta_uma_vez = False
 
     for i in range(640 * 3 // 64):
-        ground = Ground(i)
-        all_sprites.add(ground)
+            ground = Ground(i)
+            ground2 = Ground2(i)
+            all_sprites.add(ground,ground2)
 
     group_obstacles.add(rock)
     group_object.add(water, cafe, livro)
@@ -55,7 +61,7 @@ def main():
     
     colidiu = False
     tempo = 0
-    pontos = 0
+    pontos = 900
 
     while True:
         relogio.tick(30)
@@ -65,19 +71,21 @@ def main():
             if event.type == QUIT:
                 pygame.quit()
                 exit()
+            #Pulo do personagem    
             if event.type == KEYDOWN:
                 if event.key == K_SPACE:
                     if aluno.rect.y != aluno.pos_y_inicial:
                         pass
                     else:
                         aluno.pular()
-            # Movimentação do componente
+            # Movimentação do personagem
         keys = pygame.key.get_pressed()
         if keys[pygame.K_LEFT] and aluno.rect.x > 0 and colidiu == False:
-            aluno.rect.x -= 10
+            aluno.rect.x -= velocidade_aluno
         if keys[pygame.K_RIGHT] and aluno.rect.x < 640 - 138 and colidiu == False:
-            aluno.rect.x += 10        
+            aluno.rect.x += velocidade_aluno     
 
+        #Sistema de colisões
         colisoes = pygame.sprite.spritecollide(aluno, group_obstacles, False, pygame.sprite.collide_mask) 
         objetos = pygame.sprite.spritecollide(aluno, group_object, True, pygame.sprite.collide_mask) 
         all_sprites.draw(tela)
@@ -91,6 +99,7 @@ def main():
                 if isinstance(objeto, Coffee):
                     # Aumenta a velocidade do jogo quando o café é coletado
                     pontos += 5
+                    velocidade_aluno += 1
                 if isinstance(objeto, Livro):
                     pontos += 20
                 if isinstance(objeto, Water):
@@ -102,17 +111,31 @@ def main():
                 group_object.add(novo_objeto)
                 all_sprites.add(novo_objeto)
                 
-                
                 som_coleta_objeto.play()
 
         if colisoes and colidiu == False:
             som_colisao.play()
             colidiu = True
 
-        if tempo > 10 and  tempo < 10.10:
-            rock.aumentavelocidade()
-            pass
+        #Teste if tempo > 10 and  tempo < 10.10:
+           #rock.aumentavelocidade()
+        #objetos condicionais
+        if pontos == 0:
+            start = exibe_mensagem('CALCULO I', 60, (0,0,0)) 
+            tela.blit(start, (640//2, 480//2))
+            calculo.condicao()   
+        #Condição pra segunda fase - Fisica I 
+        if pontos >1000 and pontos <= 1020 and aumenta_uma_vez == False:
+            flag.condicao() #Faz a flag aparecer uma vez
+            ground2.condicao() #Era pra trocar o chão mas não tá pegando ainda
+            fase2= exibe_mensagem('FISICA I', 60, (0,0,0)) #Exibe mensagem de mudança de Fase
+            tela.blit(fase2, (640//2, 480//2))
+            rock.aumentavelocidade() #Aumenta a velocidade da rocha em +10
+            water.aumentavelocidade() #Aumenta a velocidade da agua em +10
+            cafe.aumentavelocidade() #Aumenta a velocidade da agua em +10
+            aumenta_uma_vez = True
 
+        #Condição de Game Over
         if colidiu:
             game_over = exibe_mensagem('VOCÊ PERDEU :(', 40, (0,0,0)) #game over
             tela.blit(game_over, (640//2, 480//2))
