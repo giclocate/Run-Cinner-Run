@@ -61,7 +61,10 @@ def main():
     
     colidiu = False
     tempo = 0
-    pontos = 900
+    pontos = 0
+    pontos_water = 0
+    pontos_livro = 0
+    pontos_coffee = 0
 
     while True:
         relogio.tick(30)
@@ -99,11 +102,14 @@ def main():
                 if isinstance(objeto, Coffee):
                     # Aumenta a velocidade do jogo quando o café é coletado
                     pontos += 5
+                    pontos_coffee += 5
                     velocidade_aluno += 1
                 if isinstance(objeto, Livro):
                     pontos += 20
+                    pontos_livro += 20
                 if isinstance(objeto, Water):
-                    pontos += 10   
+                    pontos += 10
+                    pontos_water += 10   
 
                 # Cria um novo objeto alternando entre água e café
                 novo_objeto = tipos_objetos[contador_objetos]()
@@ -122,14 +128,14 @@ def main():
         #objetos condicionais
         if pontos == 0:
             start = exibe_mensagem('CALCULO I', 60, (0,0,0)) 
-            tela.blit(start, (640//2, 480//2))
+            tela.blit(start, (230, 240))
             calculo.condicao()   
         #Condição pra segunda fase - Fisica I 
         if pontos >1000 and pontos <= 1020 and aumenta_uma_vez == False:
             flag.condicao() #Faz a flag aparecer uma vez
             ground2.condicao() #Era pra trocar o chão mas não tá pegando ainda
             fase2= exibe_mensagem('FISICA I', 60, (0,0,0)) #Exibe mensagem de mudança de Fase
-            tela.blit(fase2, (640//2, 480//2))
+            tela.blit(fase2, (230, 240))
             rock.aumentavelocidade() #Aumenta a velocidade da rocha em +10
             water.aumentavelocidade() #Aumenta a velocidade da agua em +10
             cafe.aumentavelocidade() #Aumenta a velocidade da agua em +10
@@ -137,8 +143,8 @@ def main():
 
         #Condição de Game Over
         if colidiu:
-            game_over = exibe_mensagem('VOCÊ PERDEU :(', 40, (0,0,0)) #game over
-            tela.blit(game_over, (640//2, 480//2))
+            game_over = exibe_mensagem('VOCÊ REPROVOU', 50, (255,0,0)) #game over
+            tela.blit(game_over, (200, 240))
             pygame.mixer.music.stop()
             pass
 
@@ -148,8 +154,15 @@ def main():
 
         texto_tempo = exibe_mensagem(int(tempo), 40, (255, 0, 0))
         texto_pontos = exibe_mensagem(int(pontos), 40, (0, 0, 0))
+        texto_water = exibe_mensagem(int(pontos_water), 40, (0, 0, 0))
+        texto_coffee = exibe_mensagem(int(pontos_coffee), 40, (0, 0, 0))
+        texto_livro = exibe_mensagem(int(pontos_livro), 40, (0, 0, 0))
+        
         tela.blit(texto_tempo, (520, 30))
         tela.blit(texto_pontos, (300, 30))
+        tela.blit(texto_water, (30, 30))
+        tela.blit(texto_coffee,(100, 30))
+        tela.blit(texto_livro,(170, 30))
 
         pygame.display.flip()
 
