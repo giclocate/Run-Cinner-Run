@@ -38,6 +38,9 @@ water_sprite = pygame.image.load(os.path.join(diretorio_imagens, 'Water Bottle.p
 cafe_sprite = pygame.image.load(os.path.join(diretorio_imagens, 'Coffee.png')).convert_alpha()
 livro_sprite = pygame.image.load(os.path.join(diretorio_imagens, 'Book2.png')).convert_alpha()
 fundo = pygame.image.load(os.path.join(diretorio_imagens, 'sky.png')).convert_alpha()
+red_flag_sprite = pygame.image.load(os.path.join(diretorio_imagens, 'flag_red.png')).convert_alpha()
+calculo_sprite = pygame.image.load(os.path.join(diretorio_imagens, 'Bandeira-calculo.png')).convert_alpha()
+ground2_sprite_sheet = pygame.image.load(os.path.join(diretorio_imagens, 'Ground_2.png')).convert_alpha()
 # convert_alpha vai ignorar a transparência
 
 
@@ -122,7 +125,7 @@ class Nuvens(pygame.sprite.Sprite):
             self.rect.x = LARGURA
         self.rect.x -= 10
 
-#classe do chão
+#classe do chão 1
 class Ground(pygame.sprite.Sprite):
     def __init__(self, pos_x ):
         pygame.sprite.Sprite.__init__(self)
@@ -131,13 +134,29 @@ class Ground(pygame.sprite.Sprite):
         self.rect = self.image.get_rect()
         self.rect.y = ALTURA - 64
         self.rect.x = pos_x * 64
-
-    def update(self):
+    def update(self):   
         if self.rect.topright[0] < 0:
             self.rect.x = LARGURA
         self.rect.x -= 10
         
-        
+#classe do chão 2
+class Ground2(pygame.sprite.Sprite):
+    def __init__(self, pos_x ):
+        pygame.sprite.Sprite.__init__(self)
+        self.image = ground2_sprite_sheet.subsurface((0,0), (32,32))
+        self.image = pygame.transform.scale(self.image, (32 * 2, 32 * 2))
+        self.rect = self.image.get_rect()
+        self.rect.y = ALTURA - 64
+        self.rect.x = pos_x * 64
+        self.aparecer = False
+    def condicao(self):
+        self.aparecer = True
+    def update(self):   
+        if self.aparecer == True:
+            if self.rect.topright[0] < 0:
+                self.rect.x = LARGURA
+            self.rect.x -= 10
+            
 #classe pedra
 class Rock(pygame.sprite.Sprite):
     def __init__(self):
@@ -148,17 +167,16 @@ class Rock(pygame.sprite.Sprite):
         self.mask = pygame.mask.from_surface(self.image)
         self.rect.center = (LARGURA,ALTURA - 88 )
         self.velocidade = False
-        self.carai = 10
+        self.velocidade_objeto = 10
     def aumentavelocidade(self):
         self.velocidade = True
-
     def update(self):
         if self.rect.topright[0] < 0:
             self.rect.x = LARGURA
         if self.velocidade == True:
-            self.carai += 1
+            self.velocidade_objeto += 10
             self.velocidade = False
-        self.rect.x -= self.carai
+        self.rect.x -= self.velocidade_objeto
         
 #classe da água  
 class Water(pygame.sprite.Sprite):
@@ -170,13 +188,19 @@ class Water(pygame.sprite.Sprite):
         self.mask = pygame.mask.from_surface(self.image)
         self.rect.x = LARGURA
         self.rect.y = random.randint(y_minimo, y_maximo)
-
+        self.velocidade = False
+        self.velocidade_objeto = 10
+    def aumentavelocidade(self):
+        self.velocidade = True
     def update(self):
         if self.rect.topright[0] < 0:
             self.rect.x = LARGURA
             self.rect.y = random.randint(y_minimo, y_maximo)
-        self.rect.x -= velocidade_jogo
-
+        if self.velocidade == True:
+            self.velocidade_objeto += 10
+            self.velocidade = False
+        self.rect.x -= self.velocidade_objeto
+   
 #classe do café        
 class Coffee(pygame.sprite.Sprite):
     def __init__(self):
@@ -187,13 +211,19 @@ class Coffee(pygame.sprite.Sprite):
         self.mask = pygame.mask.from_surface(self.image)
         self.rect.x = LARGURA
         self.rect.y = random.randint(y_minimo, y_maximo)
-        
+        self.velocidade = False
+        self.velocidade_objeto = 10
+    def aumentavelocidade(self):
+        self.velocidade = True
     def update(self):
         if self.rect.topright[0] < 0:
             self.rect.x = LARGURA
             self.rect.y = random.randint(y_minimo, y_maximo)
-        self.rect.x -= velocidade_jogo
-
+        if self.velocidade == True:
+            self.velocidade_objeto += 10
+            self.velocidade = False
+        self.rect.x -= self.velocidade_objeto
+        
 #classe do livro
 class Livro(pygame.sprite.Sprite):
     def __init__(self):
@@ -210,7 +240,51 @@ class Livro(pygame.sprite.Sprite):
             self.rect.x = LARGURA
             self.rect.y = random.randint(y_minimo, y_maximo)
         self.rect.x -= velocidade_jogo
-
+#Background
 def bg():
     escala = pygame.transform.scale(fundo, (LARGURA, ALTURA))
     tela.blit(escala,(0,0))
+
+# sprite da bandeira vermelha
+class Flag(pygame.sprite.Sprite):
+    def __init__(self):
+        pygame.sprite.Sprite.__init__(self)
+        self.imagens_flag = []
+        for i in range(4):
+            img = red_flag_sprite.subsurface((i * 125,0), (125,249))
+            img = pygame.transform.scale(img, (125/2, 249/2))
+            self.imagens_flag.append(img)
+        self.index_lista = 0    
+        self.image = self.imagens_flag[int(self.index_lista)]
+        self.rect = self.image.get_rect()
+        self.mask = pygame.mask.from_surface(self.image)
+        self.rect.center = (LARGURA + 125,ALTURA - 88 )
+        self.aparecer = False
+  
+    def condicao(self):
+        self.aparecer = True
+    def update(self):   
+        if self.aparecer == True:
+            if self.index_lista > 3:
+                self.index_lista = 0
+            self.index_lista+= 0.25 
+            self.image = self.imagens_flag[int(self.index_lista)]
+            self.rect.x -= 10
+        self.aparece = False
+
+ # sprite da bandeira calculo
+class Calculo(pygame.sprite.Sprite):
+    def __init__(self):
+        pygame.sprite.Sprite.__init__(self)
+        self.image = calculo_sprite.subsurface((0,0), (200,200))
+        self.rect = self.image.get_rect()
+        self.mask = pygame.mask.from_surface(self.image)
+        self.rect.center = (LARGURA + 200,ALTURA - 88 )
+        self.aparecer = False
+    def condicao(self):
+        self.aparecer = True
+    def update(self):   
+        if self.aparecer == True:
+            self.rect.x -= 10
+        self.aparece = False
+ 
