@@ -38,7 +38,7 @@ def main():
     for i in range(640 * 3 // 64):
             ground = Ground(i)
             ground2 = Ground2(i)
-            all_sprites.add(ground,ground2)
+            all_sprites.add(ground, ground2)
 
     group_obstacles.add(rock)
     group_object.add(water, cafe, livro)
