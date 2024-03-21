@@ -3,45 +3,12 @@ from pygame.locals import *
 from sys import exit
 from sprites import Aluno, Nuvens, Ground, Rock, Water, Coffee, Livro, bg, Flag, Calculo, Ground2, water_redimensionada, livro_redimensionado, coffee_redimensionado, clock, gameover
 from utils import exibe_mensagem, exibe_mensagem2
+from menu import menu
 from random import choice
 
 pygame.mixer.init()
 pygame.font.init()
 
-def exibir_texto(surf, texto, tamanho, x, y, cor):
-    fonte = pygame.font.Font(None, tamanho)
-    texto_surface = fonte.render(texto, True, cor)
-    texto_rect = texto_surface.get_rect()
-    texto_rect.center = (x, y)
-    surf.blit(texto_surface, texto_rect)
-
-def menu(tela, largura, altura):
-    cor_fundo = (0, 0, 0)
-    cor_titulo = (255, 255, 255)
-    cor_opcoes = (255, 255, 255)
-
-    relogio = pygame.time.Clock()
-
-    while True:
-        tela.fill(cor_fundo)  #cor de fundo do menu
-
-        exibir_texto(tela, "Jogo de P1", 48, largura // 2, 100, cor_titulo)
-
-        exibir_texto(tela, "Pressione 'S' para Iniciar", 30, largura // 2, 250, cor_opcoes)
-        exibir_texto(tela, "Pressione 'Q' para Sair", 30, largura // 2, 300, cor_opcoes)
-
-        pygame.display.update()
-        relogio.tick(30)
-
-        for event in pygame.event.get():
-            if event.type == QUIT:
-                pygame.quit()
-                exit()
-            if event.type == KEYDOWN:
-                if event.key == K_s:
-                    return "iniciar"
-                if event.key == K_q:
-                    return "sair"
 
 def main():
     pygame.init()
@@ -184,8 +151,10 @@ def main():
             #Condição de Game Over
             if colidiu:
                 tela.blit(gameover,(120,120)) #exibe imagem de game over
-                game_over = exibe_mensagem2(f'VOCÊ REPROVOU EM {int(tempo)} SEGUNDOS', 20, (0,0,0)) #game over
-                tela.blit(game_over, (160, 260)) #exibe mensagem de game over
+                game_over = exibe_mensagem2(f'VOCÊ REPROVOU EM {int(tempo)} SEGUNDOS\n', 20, (0,0,0)) #game over
+                game_over2 = exibe_mensagem2('Deseja começar novamente? Aperte S', 20, (0,0,0))
+                game_over3 = exibe_mensagem2('Clique Q para sair', 20, (0,0,0))
+                tela.blit(game_over, game_over2, game_over3, (160, 260), (160, 260), (160, 260)) #exibe mensagem de game over
                 pygame.mixer.music.stop()
                 pass
 
