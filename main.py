@@ -37,8 +37,7 @@ def main():
 
     for i in range(640 * 3 // 64):
             ground = Ground(i)
-            ground2 = Ground2(i)
-            all_sprites.add(ground, ground2)
+            all_sprites.add(ground)
 
     group_obstacles.add(rock)
     group_object.add(water, cafe, livro)
@@ -133,7 +132,6 @@ def main():
         #Condição pra segunda fase - Fisica I 
         if pontos >1000 and pontos <= 1050 and aumenta_uma_vez == False:
             flag.condicao() #Faz a flag aparecer uma vez
-            ground2.condicao() #Era pra trocar o chão mas não tá pegando ainda
             fase2= exibe_mensagem2('FISICA I', 40, (0,0,0)) #Exibe mensagem de mudança de Fase
             tela.blit(fase2, (230, 240))
             rock.aumentavelocidade() #Aumenta a velocidade da rocha em +10

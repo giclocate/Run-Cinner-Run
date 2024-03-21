@@ -33,6 +33,7 @@ y_minimo, y_maximo = 200, 250
 sprite_sheet = pygame.image.load(os.path.join(diretorio_imagens, 'alunosprite.png')).convert_alpha()
 nuvem_sprite_sheet = pygame.image.load(os.path.join(diretorio_imagens, 'clouds-small.png')).convert_alpha()
 ground_sprite_sheet = pygame.image.load(os.path.join(diretorio_imagens, 'Basic_Ground.png')).convert_alpha()
+ground_sprite_sheet = pygame.transform.scale(ground_sprite_sheet, (32, 32))
 rock_sprite = pygame.image.load(os.path.join(diretorio_imagens, 'Rock Pile.png')).convert_alpha()
 water_sprite = pygame.image.load(os.path.join(diretorio_imagens, 'Water Bottle.png')).convert_alpha()
 cafe_sprite = pygame.image.load(os.path.join(diretorio_imagens, 'Coffee.png')).convert_alpha()
