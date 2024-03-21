@@ -134,9 +134,12 @@ Prezamos por pesquisar e entender melhor o funcionamento da plataforma, fizemos 
 
 
 # Capturas de tela
- 
+
+ ![image](https://github.com/giclocate/Game-P1/assets/157263012/30cdd2fd-5311-4aa0-9597-b32f41eed74f)
 ![image](https://github.com/giclocate/Game-P1/assets/107434982/91db1a3d-7992-4bfc-a8c2-3c8708dc294e)  
 ![image](https://github.com/giclocate/Game-P1/assets/107434982/4ddc289d-0f59-4b84-9b60-f0ad8c630a2d) 
+
+
 
 
 
