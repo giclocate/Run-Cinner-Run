@@ -12,13 +12,11 @@ pygame.font.init()
 
 def main():
     pygame.init()
-    musica_de_fundo = pygame.mixer.music.load('assets/Background/Lemon Knife - Zombified! (Instrumental).mp3')
-    pygame.mixer.music.play(-1)
     tela = pygame.display.set_mode((640, 480))
     pygame.display.set_caption('Projeto P1')
     relogio = pygame.time.Clock()
 
-    escolha = menu(tela, 640, 480)  # Chamando a função menu para exibir o menu
+    escolha = menu(tela, 680, 680)  # Chamando a função menu para exibir o menu
 
     if escolha == "iniciar":
         # Iniciar o jogo principal
@@ -73,6 +71,7 @@ def main():
         pontos_water = 0
         pontos_livro = 0
         pontos_coffee = 0
+            
 
         while True:
             relogio.tick(30)
@@ -126,6 +125,23 @@ def main():
                     all_sprites.add(novo_objeto)
                     
                     som_coleta_objeto.play()
+                    
+            texto_tempo = exibe_mensagem(int(tempo), 40, (255, 0, 0))
+            texto_pontos = exibe_mensagem(int(pontos), 40, (0, 0, 0))
+            texto_water = exibe_mensagem(int(pontos_water), 40, (0, 0, 0))
+            texto_coffee = exibe_mensagem(int(pontos_coffee), 40, (0, 0, 0))
+            texto_livro = exibe_mensagem(int(pontos_livro), 40, (0, 0, 0))
+            tela.blit(texto_tempo, (520, 30))
+            tela.blit(texto_pontos, (300, 30))
+                    
+            tela.blit(texto_water, (60, 30))
+            tela.blit(texto_coffee,(60, 70))
+            tela.blit(texto_livro,(60, 110))
+                    
+            tela.blit(water_redimensionada, (20, 30))
+            tela.blit(coffee_redimensionado, (20, 70))
+            tela.blit(livro_redimensionado, (20, 110))
+            tela.blit(clock, (490, 25))     
 
             if colisoes and colidiu == False:
                 som_colisao.play()
@@ -150,36 +166,21 @@ def main():
 
             #Condição de Game Over
             if colidiu:
+                tela.fill("light blue")
                 tela.blit(gameover,(120,120)) #exibe imagem de game over
-                game_over = exibe_mensagem2(f'VOCÊ REPROVOU EM {int(tempo)} SEGUNDOS\n', 20, (0,0,0)) #game over
-                game_over2 = exibe_mensagem2('Deseja começar novamente? Aperte S', 20, (0,0,0))
+                game_over = exibe_mensagem2(f'VOCÊ REPROVOU EM {int(tempo)} SEGUNDOS', 20, (0,0,0)) #game over
+                game_over2 = exibe_mensagem2('Pressione S para tentar de novo', 20, (0,0,0))
                 game_over3 = exibe_mensagem2('Clique Q para sair', 20, (0,0,0))
-                tela.blit(game_over, game_over2, game_over3, (160, 260), (160, 260), (160, 260)) #exibe mensagem de game over
+                tela.blit(game_over, (160, 260)) #exibe mensagem de game over
+                tela.blit(game_over2, (160, 290))
+                tela.blit(game_over3, (160, 310))
                 pygame.mixer.music.stop()
-                pass
+                
+            
 
             else:
                 tempo += 0.05
                 all_sprites.update()
-
-            texto_tempo = exibe_mensagem(int(tempo), 40, (255, 0, 0))
-            texto_pontos = exibe_mensagem(int(pontos), 40, (0, 0, 0))
-            texto_water = exibe_mensagem(int(pontos_water), 40, (0, 0, 0))
-            texto_coffee = exibe_mensagem(int(pontos_coffee), 40, (0, 0, 0))
-            texto_livro = exibe_mensagem(int(pontos_livro), 40, (0, 0, 0))
-            
-            tela.blit(texto_tempo, (520, 30))
-            tela.blit(texto_pontos, (300, 30))
-            
-            tela.blit(texto_water, (60, 30))
-            tela.blit(texto_coffee,(60, 70))
-            tela.blit(texto_livro,(60, 110))
-            
-            tela.blit(water_redimensionada, (20, 30))
-            tela.blit(coffee_redimensionado, (20, 70))
-            tela.blit(livro_redimensionado, (20, 110))
-            tela.blit(clock, (490, 25))
-        
 
             pygame.display.flip()
             

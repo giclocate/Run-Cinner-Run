@@ -1,7 +1,10 @@
 import pygame
 from pygame.locals import *
 from sys import exit
+import os
 
+diretorio_principal = os.path.dirname(__file__)
+diretorio_imagens = os.path.join(diretorio_principal, 'assets\imagens')
 
 def exibir_texto(surf, texto, tamanho, x, y, cor):
     fonte = pygame.font.Font(None, tamanho)
